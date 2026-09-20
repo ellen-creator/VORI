@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vori — Neuro-Interventional Eyewear for Sensory De-Escalation</title>
+    <style>
+        :root {
+            /* Light & Soft Theme Colors */
+            --bg-main: #f8faf8;
+            --bg-card: #ffffff;
+            --bg-subtle: #f0f4f1;
+            
+            /* Soft Red-Green Biophilic Accent Palette */
+            --primary-green: #2d6a4f;      /* Soft Forest / Sage Green */
+            --primary-green-light: #52b788;/* Vibrant Light Sage */
+            --primary-green-soft: #e8f5e9; /* Pastel Green Tint */
+            
+            --accent-red: #d9534f;         /* Soft Terracotta / Gentle Coral Red */
+            --accent-red-hover: #c94440;
+            --accent-red-soft: #fdf2f0;    /* Pastel Coral Tint */
+            
+            /* Text Colors */
+            --text-title: #1a2521;         /* Deep Slate / Charcoal */
+            --text-body: #3d4d46;          /* Muted Dark Slate */
+            --text-muted: #6b7c75;         /* Soft Neutral Gray */
+            
+            /* Borders & Shadows */
+            --border-color: #e2e8e5;
+            --border-highlight: #b7e4c7;
+            --box-shadow: 0 10px 30px rgba(45, 106, 79, 0.06);
+            --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            --focus-ring: 0 0 0 3px rgba(82, 183, 136, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* --- Header Navigation --- */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-green-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(45, 106, 79, 0.2);
+        }
+
+        .logo-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-title);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tag {
+            font-size: 0.75rem;
+            color: var(--primary-green);
+            background: var(--primary-green-soft);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        nav a {
+            color: var(--text-body);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover, nav a:focus {
+            color: var(--primary-green);
+        }
+
+        .btn-nav-cta {
+            background-color: var(--accent-red);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);
+        }
+
+        .btn-nav-cta:hover {
+            background-color: var(--accent-red-hover);
+            transform: translateY(-1px);
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            padding: 80px 0 60px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--bg-main) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-green-soft);
+            color: var(--primary-green);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-highlight);
+        }
+
+        .hero-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--text-title);
+            line-height: 1.25;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        .hero-title span {
+            color: var(--primary-green);
+            background: linear-gradient(120deg, var(--primary-green), var(--primary-green-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.125rem;
+            color: var(--text-body);
+            margin-bottom: 32px;
+            line-height: 1.65;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-red);
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 18px rgba(217, 83, 79, 0.28);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-red-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(217, 83, 79, 0.35);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-card);
+            color: var(--primary-green);
+            padding: 14px 26px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            border: 1.5px solid var(--border-highlight);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-green-soft);
+            border-color: var(--primary-green);
+        }
+
+        .hero-media {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .hero-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* --- Section Styling --- */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto 56px;
+        }
+
+        .section-tag {
+            color: var(--accent-red);
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2.15rem;
+            font-weight: 800;
+            color: var(--text-title);
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* --- Product Feature Cards --- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 32px 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+            box-shadow: var(--box-shadow);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-green-soft);
+            color: var(--primary-green);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-body);
+            line-height: 1.55;
+        }
+
+        /* --- Science & Principles --- */
+        .science-section {
+            background-color: var(--bg-subtle);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .science-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 20px;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+
+        .step-number {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-red-soft);
+            color: var(--accent-red);
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 6px;
+        }
+
+        .step-content p {
+            font-size: 0.92rem;
+            color: var(--text-body);
+        }
+
+        /* --- Benefits Tab --- */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            padding: 12px 28px;
+            border-radius: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-body);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--primary-green);
+            color: #ffffff;
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .benefit-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-green-soft);
+            color: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* --- Dashboard Mockup Showcase --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--box-shadow);
+            transform: translateY(-3px);
+        }
+
+        .dashboard-img-container {
+            width: 100%;
+            height: 320px;
+            background: var(--bg-subtle);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dashboard-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dashboard-info {
+            padding: 24px;
+        }
+
+        .dashboard-info h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 8px;
+        }
+
+        .dashboard-info p {
+            font-size: 0.92rem;
+            color: var(--text-body);
+        }
+
+        /* --- Waitlist Form Section --- */
+        .waitlist-section {
+            background: linear-gradient(180deg, var(--bg-main) 0%, var(--primary-green-soft) 100%);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .waitlist-card {
+            max-width: 640px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 48px 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border-highlight);
+            box-shadow: var(--box-shadow);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: var(--accent-red);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-title);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background: #ffffff;
+            box-shadow: var(--focus-ring);
+        }
+
+        .consent-box {
+            background: var(--bg-main);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 28px;
+        }
+
+        .consent-box label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-title);
+        }
+
+        .consent-box input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--primary-green);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent-red);
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 18px rgba(217, 83, 79, 0.28);
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-red-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(217, 83, 79, 0.35);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--text-title);
+            color: #a0aec0;
+            padding: 40px 0;
+            font-size: 0.88rem;
+            text-align: center;
+        }
+
+        footer b {
+            color: #ffffff;
+        }
+
+        /* --- Modal --- */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(26, 37, 33, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-green-soft);
+            color: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 900px) {
+            .hero-grid, .science-grid, .dashboard-grid, .benefit-list {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 2.15rem;
+            }
+
+            nav {
+                display: none; /* Mobile menu collapsed for simplicity */
+            }
+
+            .waitlist-card {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="#" class="logo">
+                    <div class="logo-icon">V</div>
+                    <div>
+                        <span class="logo-text">Vori</span>
+                        <span class="logo-tag">Neuro-Interventional</span>
+                    </div>
+                </a>
+                <nav aria-label="Main Navigation">
+                    <a href="#about">Overview</a>
+                    <a href="#science">Science</a>
+                    <a href="#benefits">Benefits</a>
+                    <a href="#dashboard">Dashboard</a>
+                    <a href="#waitlist" class="btn-nav-cta">Join Waitlist</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-grid">
+                    <div>
+                        <div class="hero-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+                            Gentle &amp; Non-Invasive Assistive Technology
+                        </div>
+                        <h1 class="hero-title">Real-Time Focus &amp; <span>Sensory De-Escalation</span> Eyewear</h1>
+                        <p class="hero-desc">
+                            Vori is an ultra-lightweight (&lt;90g) smart eyewear designed for neurodivergent children (ADHD &amp; ASD). It detects early biometric signs of sensory overload and attention drift, presenting subtle, calming visual cues in peripheral vision to prevent meltdowns before they occur.
+                        </p>
+                        <div class="hero-btns">
+                            <a href="#waitlist" class="btn-primary">
+                                Apply for Early Access
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                            </a>
+                            <a href="#science" class="btn-secondary">Learn How It Works</a>
+                        </div>
+                    </div>
+                    <div class="hero-media">
+                        <img src="vori_glasses_product_mockup.png" alt="Vori Smart Glasses Product Mockup" onerror="this.onerror=null; this.src='vori_eye_tracking_concept.png';">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Overview -->
+        <section id="about">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Key Features</span>
+                    <h2 class="section-title">Designed for Learning, Built for Comfort</h2>
+                    <p class="section-subtitle">
+                        Unlike heavy gaming VR headsets, Vori integrates unobtrusively into classroom routines without drawing unwanted peer attention or causing sensory aversion.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <h3>Ultra-Lightweight (&lt;90g)</h3>
+                        <p>Constructed with soft-touch medical silicone and child-safe materials, solving the #1 parent pain point of sensory refusal.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                        </div>
+                        <h3>In-Situ Visual Prompts</h3>
+                        <p>Calming peripheral visual prompts appear gently around the edges of the lens, keeping center vision 100% clear for the teacher and blackboard.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        </div>
+                        <h3>Preemptive Neuro-Feedback</h3>
+                        <p>Real-time EEG biometric sensors and gaze-tracking catch early micro-changes (Alpha drops &amp; TBR spikes) prior to behavioral outbursts.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h3>'Stealth Health' Design</h3>
+                        <p>100% free of clinical labels like 'ADHD' or 'Therapy'. Designed as a sleek focus lens to eliminate peer teasing or classroom stigma.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Science & Mechanism Section -->
+        <section id="science" class="science-section">
+            <div class="container">
+                <div class="science-grid">
+                    <div>
+                        <span class="section-tag">Scientific Principles</span>
+                        <h2 class="section-title">How Vori Calms the Autonomic Nervous System</h2>
+                        <p style="color: var(--text-body); margin-bottom: 24px; font-size: 1rem;">
+                            When children experience sensory overload, brain Alpha power drops and stress hormones spike. Vori intervenes automatically with bio-inspired geometry to activate parasympathetic relaxation.
+                        </p>
+                        <div class="step-list">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Passive Multi-Sensor Monitoring</h4>
+                                    <p>Temple-mounted EEG sensors and eye-gaze tracking quietly measure neural engagement and focus drift without interrupting learning.</p>
+                                </div>
+                            </div>
+
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Predictive Overload Detection</h4>
+                                    <p>Algorithms identify over-reactivity indicators 30–60 seconds before an emotional outburst or meltdown occurs.</p>
+                                </div>
+                            </div>
+
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Peripheral Fractal Grounding</h4>
+                                    <p>Natural statistical fractals (D = 1.35 complexity) gently render in peripheral vision, reducing physiological stress by up to 60%.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="vori_eye_tracking_concept.png" alt="Vori Eye Tracking and Classroom Concept" style="max-width: 100%; border-radius: 20px; box-shadow: var(--box-shadow); border: 1px solid var(--border-color);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section id="benefits">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Empowering Everyone</span>
+                    <h2 class="section-title">Designed for Students, Trusted by Parents &amp; Clinicians</h2>
+                </div>
+
+                <div class="tab-nav" role="tablist">
+                    <button class="tab-btn active" onclick="openTab(event, 'tab-students')" role="tab" aria-selected="true">For Students</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab-parents')" role="tab" aria-selected="false">For Parents</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab-clinicians')" role="tab" aria-selected="false">For Clinicians &amp; Educators</button>
+                </div>
+
+                <div id="tab-students" class="tab-content active" role="tabpanel">
+                    <ul class="benefit-list">
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Preserves Blackboard Focus:</b> Central field of vision remains completely clear for viewing teachers and coursework.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Prevents Classroom Isolation:</b> De-escalates stress early, avoiding meltdowns and removal from class.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Zero Stigma:</b> Looks like stylish smart eyewear; no clinical or therapy branding.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Self-Regulation Confidence:</b> Helps children build internal focus and emotional resilience over time.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="tab-parents" class="tab-content" role="tabpanel">
+                    <ul class="benefit-list">
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Classroom Peace of Mind:</b> Reduces anxiety regarding unexpected school phone calls and outbursts.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Real-Time Mobile Insights:</b> Track daily focus duration, overload drops, and progress via the Vori App.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Sensory-Friendly Fit:</b> Made from soft-touch medical silicone weighing under 90g for high compliance.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Empirical IEP Evidence:</b> Objective bio-metric data to support Individualized Education Program reviews.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="tab-clinicians" class="tab-content" role="tabpanel">
+                    <ul class="benefit-list">
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Empirical Progress Mapping:</b> Quantifiable Alpha Power, TBR, and de-escalation response times.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Weekly PDF Reports:</b> Automated, high-fidelity neuro-metric reports for ABA therapy and consultations.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Prevents Placement Fees:</b> Keeps students in general classrooms, saving school districts up to $50k/yr.</div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon">✓</div>
+                            <div><b>Customizable Micro-Interventions:</b> Tailor sensory visual cues to individual sensory profiles.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Showcase -->
+        <section id="dashboard" style="background-color: var(--bg-subtle); border-top: 1px solid var(--border-color);">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Actionable Analytics</span>
+                    <h2 class="section-title">Clinical &amp; Parental Progress Reporting</h2>
+                    <p class="section-subtitle">
+                        Vori streams anonymized, high-fidelity neuro-metric data to the Vori Mobile App and exports weekly clinical reports.
+                    </p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="dashboard-img-container">
+                            <img src="vori_mockreport1.png" alt="Weekly Biometric Trend Report" onerror="this.onerror=null; this.src='vori_mockreport1.jpg';">
+                        </div>
+                        <div class="dashboard-info">
+                            <h4>Weekly Biometric &amp; Focus Trend Report</h4>
+                            <p>Tracks On-Task focus percentage, Theta/Beta ratio (TBR) drift, and preemptive de-escalation events across school days.</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="dashboard-img-container">
+                            <img src="vori_mockreport2.png" alt="Eye Tracking & De-Escalation Dashboard" onerror="this.onerror=null; this.src='vori_mockreport2.jpg';">
+                        </div>
+                        <div class="dashboard-info">
+                            <h4>Gaze Tracking &amp; Recovery Analytics</h4>
+                            <p>Visualizes eye-gaze spatial distribution and measures autonomic relaxation response times following visual cue intervention.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Waitlist Form Section -->
+        <section id="waitlist" class="waitlist-section">
+            <div class="container">
+                <div class="waitlist-card">
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span style="color: var(--accent-red); font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; font-size: 0.88rem;">Early Access Program</span>
+                        <h2 style="font-size: 2rem; font-weight: 800; margin: 8px 0 12px; color: var(--text-title);">Join the Vori Waitlist</h2>
+                        <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.6;">
+                            Vori is preparing for clinical pilot testing and early availability. Register your interest below to receive release notifications and pilot program invitations.
+                        </p>
+                    </div>
+
+                    <form id="waitlistForm" onsubmit="handleWaitlistSubmit(event)">
+                        <div class="form-group">
+                            <label for="userName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="userName" class="form-input" placeholder="Jane Doe" required aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userPhone">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="userPhone" class="form-input" placeholder="+1 (555) 000-0000" required aria-required="true">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userRole">I am a... <span class="required">*</span></label>
+                            <select id="userRole" class="form-input" required>
+                                <option value="" disabled selected>Select your role</option>
+                                <option value="parent">Parent or Guardian</option>
+                                <option value="teacher">Special Education / Classroom Educator</option>
+                                <option value="clinician">Clinician / Pediatric Neurologist / ABA Therapist</option>
+                                <option value="researcher">Researcher / Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Explicit Consent Notice -->
+                        <div class="consent-box">
+                            <label>
+                                <input type="checkbox" id="marketingConsent" required aria-required="true">
+                                <span>[Required] I agree to the collection of personal information and receiving product launch / marketing notifications.</span>
+                            </label>
+                            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                                ℹ️ <b>Collected Items:</b> Full Name, Phone Number, Role<br>
+                                ℹ️ <b>Purpose:</b> Product release alerts, pilot program invitations, and related product updates.<br>
+                                ℹ️ Your information is stored securely in accordance with privacy guidelines and will not be shared with third parties.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Submit Waitlist Application 🚀</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 8px;"><b>Vori</b> — Neuro-Interventional Eyewear Technology</p>
+            <p>© 2026 Vori Inc. All rights reserved. Built with accessibility and biophilic neuro-inclusive principles.</p>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 id="modalTitle" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; color: var(--text-title);">Registration Complete!</h3>
+            <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;">
+                Thank you for joining the Vori waitlist.<br>We will notify you at your provided phone number as soon as pilot testing and early availability open.
+            </p>
+            <button onclick="closeModal()" class="btn-primary" style="width: 100%; justify-content: center;">Done</button>
+        </div>
+    </div>
+
+        <!-- JavaScript -->
+    <script>
+        // Tab Switcher
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+                tabBtns[i].setAttribute("aria-selected", "false");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            evt.currentTarget.setAttribute("aria-selected", "true");
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+            document.getElementById('waitlistForm').reset();
+        }
+
+        // Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVvM4NXb8e5gzw7wMRiMfxOKwzilnlvQfwfs5lKPz5dL2WU8JK9-QLwggA06AuxDBQ/exec';
+
+        // Form Submission with Google Sheets Integration
+        async function handleWaitlistSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const role = document.getElementById('userRole').value;
+            const consent = document.getElementById('marketingConsent').checked;
+
+            // Validation check
+            if (!name || !phone || !role || !consent) {
+                alert('Please fill out all required fields and check the consent box.');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.innerText = "Submitting...";
+            submitBtn.disabled = true;
+
+            const payload = { name, phone, role, consent };
+
+            try {
+                // Submit to Google Sheets via Apps Script
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Show success modal
+                document.getElementById('successModal').style.display = 'flex';
+            } catch (err) {
+                alert("Submission failed. Please try again.");
+            } finally {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

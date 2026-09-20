@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vori WebXR - Real-Time Interventional Vision Simulator</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050814; font-family: 'Courier New', monospace; }
+        #canvas-container { width: 100vw; height: 100vh; }
+        
+        #controlPanel {
+            position: absolute; top: 15px; right: 15px; width: 310px;
+            background: rgba(10, 15, 30, 0.88); color: #00f0ff;
+            padding: 15px; border-radius: 12px; border: 1px solid #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.25); z-index: 100;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .control-group { margin-bottom: 12px; }
+        .control-group label { display: block; font-size: 11px; margin-bottom: 4px; color: #a0aec0; }
+        .control-group input[type=range] { width: 100%; cursor: pointer; }
+        .control-group select { width: 100%; padding: 6px; background: #0a1020; color: #00f0ff; border: 1px solid #00f0ff; border-radius: 5px; font-family: monospace; font-size: 11px; cursor: pointer; }
+        .val-display { float: right; font-weight: bold; color: #ffffff; }
+        button {
+            width: 100%; padding: 8px; background: #00a896; color: white;
+            border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: monospace;
+            margin-bottom: 6px;
+        }
+        button:hover { opacity: 0.9; }
+        
+        #hudOverlay {
+            position: absolute; bottom: 20px; left: 20px; color: #00ff88;
+            background: rgba(0, 0, 0, 0.75); padding: 12px 18px; border-radius: 8px;
+            border-left: 4px solid #00ff88; pointer-events: none; font-size: 12px;
+        }
+        #gazeCursor {
+            position: absolute; width: 16px; height: 16px; border: 2px solid #ff3366;
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px #ff3366; display: block; z-index: 99;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/webxr/VRButton.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="gazeCursor"></div>
+
+    <div id="controlPanel">
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; text-align: center; color: #ffffff;">VORI NEURO MOCKUP</h3>
+        
+        <div class="control-group">
+            <label>Visual Cue Mode (형태 선택):</label>
+            <select id="modeSelect">
+                <option value="ring">1. Peripheral Fractal Ring (기본 링)</option>
+                <option value="breathing">2. 0.1Hz Slow Breathing Pacer (호흡 팽창 구체)</option>
+                <option value="botanical">3. Organic Botanical Wave (은행잎 맥 파동)</option>
+                <option value="fluid">4. Fluid Ripple Dynamics (유체 물결 파동)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Sensory Color Profile (색상 선택):</label>
+            <select id="colorSelect">
+                <option value="teal">Pastel Teal / Mint (진정)</option>
+                <option value="blue">Soft Ocean Blue (이완)</option>
+                <option value="lavender">Muted Lavender (뉴트럴)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Alpha Power (Sensory Gate): <span id="alphaVal" class="val-display">0.50</span></label>
+            <input type="range" id="alphaSlider" min="0.0" max="1.0" step="0.01" value="0.50">
+        </div>
+        
+        <div class="control-group">
+            <label>TBR (Focus Drift Index): <span id="tbrVal" class="val-display">2.00</span></label>
+            <input type="range" id="tbrSlider" min="1.0" max="6.0" step="0.1" value="2.00">
+        </div>
+
+        <div class="control-group">
+            <button id="forceCueBtn">Force Visual Cue: OFF</button>
+            <button id="toggleAutoBtn">Auto EEG Simulation: OFF</button>
+            <button id="gazeShiftBtn">Erratic Gaze Shift: OFF</button>
+        </div>
+    </div>
+
+    <div id="hudOverlay">
+        <b>[Vori Real-Time Bio-State]</b><br>
+        Backend: <span id="backendStatus" style="color: #ffaa00;">Standalone (Not Connected)</span><br>
+        Active Mode: <span id="modeText">Peripheral Fractal Ring</span><br>
+        State: <span id="statusText">Normal Focus</span><br>
+        Visual Cue Opacity: <span id="opacityText">0%</span>
+    </div>
+
+    <script>
+        // 1. WebSocket 연결 (안전한 Exception Handling)
+        let wsConnected = false;
+        try {
+            const host = window.location.hostname || 'localhost';
+            const ws = new WebSocket('ws://' + host + ':8765');
+            ws.onopen = () => {
+                wsConnected = true;
+                document.getElementById('backendStatus').innerText = 'Connected (ws://' + host + ':8765)';
+                document.getElementById('backendStatus').style.color = '#00ff88';
+            };
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                document.getElementById('alphaSlider').value = data.alphaPower;
+                document.getElementById('tbrSlider').value = data.tbr;
+                document.getElementById('alphaVal').innerText = data.alphaPower.toFixed(2);
+                document.getElementById('tbrVal').innerText = data.tbr.toFixed(2);
+            };
+        } catch(e) {
+            console.log("Running in standalone mode");
+        }
+
+        // 2. Three.js Scene, Camera, Renderer
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050814);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1.6, 2.0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        if (typeof VRButton !== 'undefined' && VRButton.createButton) {
+            renderer.xr.enabled = true;
+            document.body.appendChild(VRButton.createButton(renderer));
+        }
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // 3. Shaders & Material Setup
+        const vertexShader = `
+            uniform float uTime;
+            uniform float uTBR;
+            uniform float uMode;
+            varying vec2 vUv;
+            varying float vNoise;
+
+            void main() {
+                vUv = uv;
+                float noise = 0.0;
+                if (uMode == 0.0) {
+                    // Ring
+                    noise = sin(position.x * (uTBR * 2.0) + uTime) * cos(position.y * (uTBR * 2.0) + uTime);
+                } else if (uMode == 1.0) {
+                    // Breathing Sphere
+                    noise = sin(uTime * 0.628); // 0.1Hz breathing
+                } else if (uMode == 2.0) {
+                    // Botanical Wave
+                    noise = sin(position.x * 5.0 + uTime) * sin(position.y * 5.0 + uTime * 0.8);
+                } else {
+                    // Fluid Ripple
+                    float dist = length(position.xy);
+                    noise = sin(dist * 10.0 - uTime * 3.0) * 0.5;
+                }
+                vNoise = noise;
+                vec3 newPos = position + normal * (noise * 0.04);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
+            }
+        `;
+
+        const fragmentShader = `
+            uniform float uAlphaGating;
+            uniform vec3 uBaseColor;
+            uniform vec3 uHighlightColor;
+            varying vec2 vUv;
+            varying float vNoise;
+
+            void main() {
+                vec3 finalColor = mix(uBaseColor, uHighlightColor, vNoise * 0.5 + 0.5);
+                gl_FragColor = vec4(finalColor, uAlphaGating * 0.8);
+            }
+        `;
+
+        const colors = {
+            teal: { base: new THREE.Vector3(0.0, 0.65, 0.7), highlight: new THREE.Vector3(0.2, 0.95, 0.85) },
+            blue: { base: new THREE.Vector3(0.0, 0.35, 0.85), highlight: new THREE.Vector3(0.3, 0.75, 1.0) },
+            lavender: { base: new THREE.Vector3(0.5, 0.35, 0.85), highlight: new THREE.Vector3(0.75, 0.6, 1.0) }
+        };
+
+        const material = new THREE.ShaderMaterial({
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
+            uniforms: {
+                uTime: { value: 0 },
+                uTBR: { value: 2.0 },
+                uAlphaGating: { value: 0.0 },
+                uMode: { value: 0.0 },
+                uBaseColor: { value: colors.teal.base },
+                uHighlightColor: { value: colors.teal.highlight }
+            },
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+
+        // Geometries
+        const geometries = {
+            ring: new THREE.RingGeometry(0.6, 1.0, 64),
+            breathing: new THREE.IcosahedronGeometry(0.8, 4),
+            botanical: new THREE.TorusKnotGeometry(0.6, 0.18, 100, 16, 2, 3),
+            fluid: new THREE.TorusGeometry(0.7, 0.25, 32, 100)
+        };
+
+        let cueMesh = new THREE.Mesh(geometries.ring, material);
+        cueMesh.position.set(0, 1.6, -1.5);
+        scene.add(cueMesh);
+
+        // 4. UI Elements & State
+        const modeSelect = document.getElementById('modeSelect');
+        const colorSelect = document.getElementById('colorSelect');
+        const alphaSlider = document.getElementById('alphaSlider');
+        const tbrSlider = document.getElementById('tbrSlider');
+        const alphaValDisplay = document.getElementById('alphaVal');
+        const tbrValDisplay = document.getElementById('tbrVal');
+        const forceCueBtn = document.getElementById('forceCueBtn');
+        const toggleAutoBtn = document.getElementById('toggleAutoBtn');
+        const gazeShiftBtn = document.getElementById('gazeShiftBtn');
+        const gazeCursor = document.getElementById('gazeCursor');
+
+        let isForceCue = false;
+        let isAutoSim = false;
+        let isGazeShift = false;
+
+        // Switch Geometry Mode
+        modeSelect.addEventListener('change', (e) => {
+            const mode = e.target.value;
+            scene.remove(cueMesh);
+            let modeNum = 0.0;
+            if (mode === 'ring') { modeNum = 0.0; }
+            else if (mode === 'breathing') { modeNum = 1.0; }
+            else if (mode === 'botanical') { modeNum = 2.0; }
+            else if (mode === 'fluid') { modeNum = 3.0; }
+
+            material.uniforms.uMode.value = modeNum;
+            cueMesh = new THREE.Mesh(geometries[mode], material);
+            cueMesh.position.set(targetPos.x, targetPos.y, targetPos.z);
+            scene.add(cueMesh);
+
+            const modeNames = {
+                ring: "Peripheral Fractal Ring",
+                breathing: "0.1Hz Slow Breathing Pacer",
+                botanical: "Organic Botanical Wave",
+                fluid: "Fluid Ripple Dynamics"
+            };
+            document.getElementById('modeText').innerText = modeNames[mode];
+        });
+
+        // Switch Color Profile
+        colorSelect.addEventListener('change', (e) => {
+            const theme = colors[e.target.value] || colors.teal;
+            material.uniforms.uBaseColor.value = theme.base;
+            material.uniforms.uHighlightColor.value = theme.highlight;
+        });
+
+        alphaSlider.addEventListener('input', (e) => {
+            alphaValDisplay.innerText = parseFloat(e.target.value).toFixed(2);
+        });
+        tbrSlider.addEventListener('input', (e) => {
+            tbrValDisplay.innerText = parseFloat(e.target.value).toFixed(2);
+        });
+
+        forceCueBtn.addEventListener('click', () => {
+            isForceCue = !isForceCue;
+            forceCueBtn.innerText = isForceCue ? "Force Visual Cue: ON" : "Force Visual Cue: OFF";
+            forceCueBtn.style.background = isForceCue ? "#e53e3e" : "#00a896";
+        });
+
+        toggleAutoBtn.addEventListener('click', () => {
+            isAutoSim = !isAutoSim;
+            toggleAutoBtn.innerText = isAutoSim ? "Auto EEG Simulation: ON" : "Auto EEG Simulation: OFF";
+            toggleAutoBtn.style.background = isAutoSim ? "#e53e3e" : "#00a896";
+        });
+
+        gazeShiftBtn.addEventListener('click', () => {
+            isGazeShift = !isGazeShift;
+            gazeShiftBtn.innerText = isGazeShift ? "Erratic Gaze Shift: ON" : "Erratic Gaze Shift: OFF";
+            gazeShiftBtn.style.background = isGazeShift ? "#e53e3e" : "#00a896";
+        });
+
+        // 5. Mouse & Eye Tracking Emulation
+        const targetPos = new THREE.Vector3(0, 1.6, -1.5);
+        let mousePixelX = window.innerWidth / 2;
+        let mousePixelY = window.innerHeight / 2;
+
+        window.addEventListener('mousemove', (event) => {
+            if (!isGazeShift) {
+                mousePixelX = event.clientX;
+                mousePixelY = event.clientY;
+                const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                targetPos.x = mouseX * 0.8;
+                targetPos.y = 1.6 + mouseY * 0.5;
+            }
+        });
+
+        // 6. Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+            material.uniforms.uTime.value = elapsedTime;
+
+            // Erratic Gaze Shift Simulation
+            if (isGazeShift) {
+                const shiftX = Math.sin(elapsedTime * 2.5) * 0.6 + Math.cos(elapsedTime * 4.1) * 0.3;
+                const shiftY = Math.cos(elapsedTime * 3.1) * 0.4;
+                targetPos.x = shiftX;
+                targetPos.y = 1.6 + shiftY;
+                mousePixelX = (shiftX / 0.8 + 1) * 0.5 * window.innerWidth;
+                mousePixelY = (-shiftY / 0.5 + 1) * 0.5 * window.innerHeight;
+            }
+
+            gazeCursor.style.left = mousePixelX + 'px';
+            gazeCursor.style.top = mousePixelY + 'px';
+
+            let alphaVal = parseFloat(alphaSlider.value);
+            let tbrVal = parseFloat(tbrSlider.value);
+
+            if (isAutoSim) {
+                alphaVal = 0.5 + 0.3 * Math.sin(elapsedTime * 0.8);
+                tbrVal = 2.5 + 1.5 * Math.cos(elapsedTime * 0.5);
+                alphaSlider.value = alphaVal.toFixed(2);
+                tbrSlider.value = tbrVal.toFixed(2);
+                alphaValDisplay.innerText = alphaVal.toFixed(2);
+                tbrValDisplay.innerText = tbrVal.toFixed(2);
+            }
+
+            let gatingTarget = 0.0;
+            if (isForceCue) {
+                gatingTarget = 1.0;
+            } else if (alphaVal < 0.35) {
+                gatingTarget = Math.min(1.0, Math.max(0.0, (0.35 - alphaVal) * 2.8));
+            }
+
+            material.uniforms.uAlphaGating.value += (gatingTarget - material.uniforms.uAlphaGating.value) * 0.08;
+            material.uniforms.uTBR.value = tbrVal;
+
+            // Smooth position lerp
+            cueMesh.position.lerp(targetPos, 0.08);
+
+            // Mesh rotation for dynamic effect
+            if (material.uniforms.uMode.value === 1.0) {
+                // Breathing sphere pulse scale
+                const pulse = 1.0 + Math.sin(elapsedTime * 0.628) * 0.2;
+                cueMesh.scale.set(pulse, pulse, pulse);
+            } else if (material.uniforms.uMode.value === 2.0 || material.uniforms.uMode.value === 3.0) {
+                cueMesh.rotation.x = elapsedTime * 0.2;
+                cueMesh.rotation.y = elapsedTime * 0.3;
+            }
+
+            // HUD Status
+            const statusEl = document.getElementById('statusText');
+            document.getElementById('opacityText').innerText = Math.round(material.uniforms.uAlphaGating.value * 100) + "%";
+
+            if (alphaVal < 0.35 || isForceCue) {
+                statusEl.innerText = "Sensory Overload (De-Escalating...)";
+                statusEl.style.color = "#ff3366";
+            } else if (tbrVal > 3.5) {
+                statusEl.innerText = "Focus Drift Detected";
+                statusEl.style.color = "#ffbb00";
+            } else {
+                statusEl.innerText = "Normal Focus State";
+                statusEl.style.color = "#00ff88";
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
